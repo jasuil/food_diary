@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, redirect
 from flask import render_template, request, make_response
 from sqlalchemy import text
 from datetime import datetime, timezone, timedelta
@@ -16,8 +16,8 @@ DB.db.init_app(app)
 with app.app_context():
     DB.db.create_all()
 
-def session_proc():
-    session_value = request.cookies.get('my-session')
+def session_proc(session_cookie = None):
+    session_value = request.cookies.get('my-session') if session_cookie is None else session_cookie
 
     if session_value is None:
         return render_template('login.html')
@@ -36,7 +36,14 @@ def session_proc():
 
 @app.route("/")
 def hello():
-    login_template = session_proc()
+    session_info = request.args.get('my-session')
+    session_cookie = None
+    if session_info is not None and len(session_info.split('-')) == 2:
+        res = make_response(render_template('index.html'))
+        res.set_cookie(key='my-session', value=session_info, expires=str(datetime.fromtimestamp(int(session_info.split('-')[1]))))
+        return res
+
+    login_template = session_proc(session_cookie)
     if login_template is not None:
         return login_template
     return render_template('index.html')
@@ -71,7 +78,7 @@ def login():
         """), {'user_id': user_id, 'cookie_value': cookie_value, 'expire': str(datetime.fromtimestamp(expire))})
         DB.db.session.commit()
 
-        return res
+        return redirect('/?my-session='+cookie_value, 301)
     else:
         return render_template('login.html')
 
