@@ -161,4 +161,4 @@ cython_debug/
 
 
 # credential and DB password
-mail_token.json
+service/mail_token.json
