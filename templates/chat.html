@@ -1,0 +1,57 @@
+<html>
+<head>
+</head>
+<body>
+
+<button onclick="chat_open()">chat open</button>
+<textarea id="message"></textarea>
+<button onclick="message_send()">message send</button>
+<button onclick="chat_close()">chat close</button>
+
+<script>
+if ('WebSocket' in window) {  
+	var oSocket = new WebSocket("ws://localhost:8765");
+	
+	function chat_open() {
+		if (oSocket.readyState !== WebSocket.OPEN) {
+			oSocket = new WebSocket("ws://localhost:8765");
+			
+			oSocket.onmessage = function (e) { 
+				console.log(e.data); 
+			};
+
+			oSocket.onopen = function (e) {
+				console.log("open");
+			};
+
+			oSocket.onclose = function (e) {
+				console.log("close");		
+				
+			};
+		}
+	}
+
+    oSocket.onmessage = function (e) { 
+        console.log(e.data); 
+    };
+
+    oSocket.onopen = function (e) {
+        console.log("open");
+    };
+
+    oSocket.onclose = function (e) {
+        console.log("close");		
+		
+    };
+
+	function message_send(){
+		oSocket.send(document.getElementById('message').value);
+	}
+	function chat_close() {
+		oSocket.close();
+	}
+}
+
+</script>
+</body>
+</html>
