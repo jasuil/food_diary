@@ -21,6 +21,7 @@ class UserSession(db.Model):
 class DailyDish(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     create_at = db.Column(db.DateTime, nullable=False)
+    create_user_id = db.Column(db.String(100), ForeignKey("user.user_id"))
 
 class DailyDishDetail(db.Model):
     id = db.Column(db.Integer, primary_key=True)

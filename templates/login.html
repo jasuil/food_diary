@@ -22,7 +22,11 @@ fetch("/login", {
   }
 })
   .then((response) => response.json())
-  .then((json) => console.log(json));
+  .then((json) =>
+  {
+    console.log(json);
+    window.location.href = '/';
+  });
 
 console.log(user_id);
 }
